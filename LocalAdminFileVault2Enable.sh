@@ -42,9 +42,9 @@ userPass=$7
 
 userCheck=`fdesetup list | awk -v usrN='localadmin' -F, 'index($0, usrN) {print $1}'`
 if [ "${userCheck}" == "${userName}" ]; then
-echo "This user is already added to the FileVault 2 list."
+echo "This user is already added to the FileVault 2"
 elif [ "${userCheck}" != "${userName}" ]; then
-echo "Local Admin is not enabled for FileVault 2 list."
+echo "Local Admin is not enabled for FileVault 2 list"
 fi
 
 ######################################################################################
@@ -54,11 +54,15 @@ fi
 encryptCheck=`fdesetup status`
 statusCheck=$(echo "${encryptCheck}" | grep "FileVault is On.")
 expectedStatus="FileVault is On."
-if [ "${statusCheck}" != "${expectedStatus}" ]; then
-echo "The encryption process has not completed, unable to add user at this time."
-elif [ "${statusCheck}" == "${expectedStatus}" ]; then
+while [ "${statusCheck}" != "${expectedStatus}" ]
+do
+	echo "Still encrypting..."
+	if [ "${statusCheck}" == "${expectedStatus}" ]
+	then
+		break
+		fi
+done
 echo "FileVault Encryption is Complete"
-fi
 
 ######################################################################################
 # Create a temporary plist file
